@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SpaceVol</title>
+<style>
+:root{--n:#172536;--p:#344B59;--s:#55756F;--g:#899A91;--a:#C4B9A7;--m:#EAE6DD}
+*{box-sizing:border-box}
+body{margin:0;background:var(--n);color:var(--m);font:16px/1.6 "Segoe UI",system-ui,sans-serif}
+a{color:var(--a)}h1,h2,h3{font-family:Georgia,serif;font-weight:600;line-height:1.2;margin:0 0 .5em}
+nav{position:sticky;top:0;z-index:5;background:#172536ee;backdrop-filter:blur(6px);border-bottom:1px solid var(--p);display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:8px 18px}
+nav b{margin-right:auto;letter-spacing:.12em;font-size:14px}nav a{text-decoration:none;color:var(--m);padding:6px 11px;border-radius:8px;font-size:14px}nav a:hover{background:var(--p)}
+section{max-width:1150px;margin:0 auto;padding:56px 18px}
+.hero{text-align:center;padding-top:80px}.hero h1{font-size:clamp(34px,7vw,64px);letter-spacing:.06em}.hero p{max-width:640px;margin:0 auto 1em;color:var(--a)}
+.btn,button{font:inherit;background:var(--s);color:#fff;border:1px solid var(--g);border-radius:9px;padding:8px 15px;cursor:pointer;transition:background .2s}
+.btn{display:inline-block;text-decoration:none}.btn:hover,button:hover{background:#456560}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+button.on{background:var(--a);color:var(--n);border-color:var(--a)}button[disabled]{opacity:.55;cursor:default}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--p);border:1px solid #4a6270;border-radius:14px;padding:18px;box-shadow:0 6px 18px #0004}
+.card h3{font-size:18px}.tag{color:var(--a);font-size:13px}
+.lab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:14px}
+.cv{position:relative;height:420px;border-radius:14px;background:#10202d;border:1px solid var(--p);overflow:hidden}.cv canvas{width:100%;height:100%;display:block;touch-action:none}
+.cv .msg{position:absolute;inset:0;display:grid;place-items:center;color:var(--a);padding:16px;text-align:center}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.sl{display:grid;grid-template-columns:110px 1fr 54px;gap:8px;align-items:center;font-size:14px}input[type=range]{accent-color:var(--a);width:100%}
+.res{font-family:Consolas,monospace;font-size:14px;background:#10202d;border-radius:10px;padding:10px 12px;margin:8px 0}.res b{color:var(--a)}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:8px;border-bottom:1px solid #4a6270;text-align:left}th{color:var(--a)}
+.tw{overflow-x:auto}.bar{height:8px;background:#10202d;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--a);transition:width .4s}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;background:#2a4050}.opt.ok{background:var(--s);border-color:var(--m)}.opt.bad{background:#7a4a42;border-color:#d9a99f}
+.fb{margin-top:10px;padding:10px;border-left:4px solid var(--a);background:#10202d;border-radius:6px}
+details{background:var(--p);border-radius:10px;padding:10px 14px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+section{display:none}section.active{display:block;animation:vin .5s ease both}section.out{display:block;opacity:0;transform:translateY(-10px);transition:opacity .22s,transform .22s}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+nav a.cur{background:var(--p);box-shadow:inset 0 -2px var(--a)}
+#portada{position:fixed;inset:0;z-index:20;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,#344B59 0,#172536 65%);transition:opacity .6s,transform .6s}
+#portada.hide{opacity:0;transform:scale(1.04);pointer-events:none}
+#portada h1{font-size:clamp(44px,12vw,104px);letter-spacing:.08em;margin:.1em 0}#portada p{max-width:560px;margin:0 auto 1.2em;color:var(--a)}
+#portada svg{width:min(360px,80vw);height:auto;margin-bottom:6px;animation:fl 6s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-10px)}}
+#portada>div>*{animation:vin .9s ease both}#portada>div>*:nth-child(2){animation-delay:.1s}#portada>div>*:nth-child(3){animation-delay:.2s}#portada>div>*:nth-child(4){animation-delay:.3s}#portada>div>*:nth-child(5){animation-delay:.4s}
+.lg{display:grid;grid-template-columns:260px minmax(0,1fr) 310px;gap:14px;margin-top:14px;align-items:start}
+.pn{background:var(--p);border:1px solid #4a6270;border-radius:14px;padding:16px;box-shadow:0 6px 18px #0004;min-width:0}.pn h3{margin-bottom:4px}.pn h4{margin:14px 0 4px;font-size:14px;color:var(--a)}
+.ey{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--a);margin-bottom:6px}
+.cat{max-height:340px;overflow:auto;display:grid;gap:8px;margin:10px 0;padding-right:4px}
+.li{text-align:left;background:#2a4050;display:block;width:100%}.li small{display:block;color:var(--a)}.li.on{border-color:var(--a);box-shadow:inset 4px 0 var(--a)}
+.fl button{padding:3px 11px;font-size:13px}.chipb{border:1px solid var(--g);border-radius:99px;padding:3px 12px;font-size:13px;color:var(--a)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}.sub{position:relative;background:#10202d;border:1px solid #4a6270;border-radius:12px;overflow:hidden;min-width:0}
+.sub canvas{width:100%;height:300px;display:block}.sub .cv{height:300px;border:0;border-radius:0}
+.chip2{position:absolute;left:8px;top:8px;z-index:2;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--g);border-radius:8px;padding:2px 8px;background:#172536cc}
+.sub code{position:absolute;left:8px;bottom:8px;background:#172536cc;border-radius:6px;padding:2px 8px;font-size:13px}
+.tb{display:flex;justify-content:space-between;gap:12px;background:#10202d;border-radius:12px;padding:12px;margin-bottom:10px}.pc{text-align:center}.pc b{font-size:28px;color:var(--a)}.pc small{display:block;font-size:11px}
+.kb,.rt{border-left:4px solid var(--a);background:#10202d;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px}
+#lstage:fullscreen{background:var(--n);overflow:auto;padding:20px}
+@media(max-width:1100px){.lg{grid-template-columns:1fr}.cat{max-height:220px}}@media(max-width:700px){.pair{grid-template-columns:1fr}}
+@media(max-width:800px){.lab{grid-template-columns:1fr}.cv{height:320px}.sl{grid-template-columns:90px 1fr 48px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+#exp h2,#exp h3{scroll-margin-top:70px}
+</style></head><body>
+<div id="portada" role="dialog" aria-label="Portada de SpaceVol"><div>
+<svg viewBox="0 0 360 120" fill="none" stroke="#C4B9A7" stroke-width="2" aria-hidden="true"><ellipse cx="60" cy="25" rx="34" ry="10"/><path d="M26 25v60M94 25v60"/><path d="M26 85a34 10 0 0 0 68 0"/><path d="M180 12 146 88a34 10 0 0 0 68 0Z"/><ellipse cx="180" cy="88" rx="34" ry="10" stroke="#899A91"/><path d="M262 20c4 70 76 70 80 0" stroke="#EAE6DD"/><ellipse cx="302" cy="20" rx="40" ry="10" stroke="#899A91"/></svg>
+<h1>SpaceVol</h1><p style="font-size:20px;color:var(--m)">Explora, experimenta y comprende las matemáticas en tres dimensiones</p>
+<p>Laboratorio virtual de cilindros, conos, esferas, prismas, pirámides, toros y paraboloides.</p><button class="btn" id="enter" style="font-size:18px;padding:12px 28px">Comenzar exploración</button></div></div>
+<nav aria-label="Principal"><b>SpaceVol</b><a href="#inicio">Inicio</a><a href="#lab">Laboratorio 3D</a><a href="#exp">Experimenta</a><a href="#aprende">Aprende</a><a href="#retos">Retos</a></nav>
+<main>
+<section id="inicio" class="hero active"><h2 style="font-size:clamp(28px,5vw,44px)">Bienvenido al laboratorio</h2>
+<p>Un laboratorio virtual para manipular cilindros, conos, esferas, prismas, pirámides, toros y paraboloides, formular hipótesis, comprobar fórmulas y resolver retos con retroalimentación inmediata.</p>
+<a class="btn" href="#lab">Comenzar exploración</a>
+<div class="grid" style="margin-top:44px;text-align:left">
+<a class="card" href="#lab" style="text-decoration:none;color:inherit"><h3>Laboratorio 3D</h3><span class="tag">Rota, acerca y modifica parámetros</span></a>
+<a class="card" href="#exp" style="text-decoration:none;color:inherit"><h3>Experimenta y descubre</h3><span class="tag">¿Qué pasa si duplicamos el radio?</span></a>
+<a class="card" href="#aprende" style="text-decoration:none;color:inherit"><h3>Aprende</h3><span class="tag">Comparación, vida cotidiana y glosario</span></a>
+<a class="card" href="#retos" style="text-decoration:none;color:inherit"><h3>Retos</h3><span class="tag">Tres niveles con puntuación</span></a></div>
+<h2 style="margin-top:44px">¿Qué aprenderás?</h2><div class="grid" style="text-align:left"><div class="card">Calcular áreas y volúmenes de cilindros y conos.</div><div class="card">Relacionar radio, altura y generatriz.</div><div class="card">Reconocer paraboloides elípticos e hiperbólicos.</div><div class="card">Calcular áreas y volúmenes de esferas, prismas, pirámides, toros y más.</div><div class="card">Argumentar con datos qué cambia al variar un parámetro.</div><div class="card">Descubrir cómo cambian el área y el volumen al ampliar una figura.</div></div></section>
+
+<section id="lab"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Laboratorio geométrico 3D</h2><span class="chipb" id="cnt"></span></div>
+<div class="lg">
+<aside class="pn"><div class="ey">01 · Selecciona</div><h3>Laboratorio de figuras</h3><p class="tag">Explora el origen 2D y la transformación espacial.</p><div class="row fl" id="flt"></div><div id="cat" class="cat"></div><div class="kb"><b>¿Sabías que…?</b><p id="tip" style="margin:4px 0 0"></p></div></aside>
+<div class="pn" id="lstage"><div class="ey">02 · Explora y transforma</div>
+<div class="row" style="justify-content:space-between;align-items:flex-start"><div><h3 id="lt" style="margin:0"></h3><p class="tag" id="ls" style="margin:0"></p></div><button id="fs">Pantalla completa</button></div>
+<div class="pair"><div class="sub"><span class="chip2">Figura original · 2D</span><canvas id="c2" role="img" aria-label="Figura plana original"></canvas><code id="e2"></code></div>
+<div class="sub"><span class="chip2">Resultado · 3D</span><div class="cv" id="cv1"></div></div></div>
+<div class="tb"><div><h4 style="margin:0 0 4px">Transformación geométrica</h4><p id="td" style="margin:0;font-size:14px"></p></div><div class="pc"><b id="pct">0%</b><small>del proceso</small></div></div>
+<div class="row"><button id="bk" aria-label="Retroceder 10 %">◀</button><button id="an">Animar</button><button id="fw" aria-label="Avanzar 10 %">▶</button><input id="pr" type="range" min="0" max="1" step=".005" value="0" aria-label="Avance de la transformación" style="flex:1;min-width:120px"><button id="rst">Vista inicial</button><button id="shot">Capturar</button></div>
+<div id="sl" style="margin-top:8px"></div><p class="tag" style="margin:6px 0 0">Arrastra para rotar · rueda o pellizco para acercar</p></div>
+<aside class="pn"><div class="ey">03 · Comprende y calcula</div><h3>Ficha matemática</h3><div id="fi"></div></aside></div></section>
+
+<section id="exp"><h2>Experimenta y descubre</h2>
+<div class="row fl" id="xj" role="group" aria-label="Ir a un experimento"></div>
+<div class="lab"><div><div class="cv" id="cv2"></div><p class="tag">Contorno claro: cilindro original (r = 1, h = 2). Sólido relleno: el modificado.</p></div>
+<div class="card"><h3>Cilindro: ¿qué cambia el volumen?</h3>
+<div class="sl"><label for="kh">Altura × </label><input id="kh" type="range" min="1" max="4" step="0.5" value="1"><output id="kho"></output></div>
+<div class="sl"><label for="kr">Radio × </label><input id="kr" type="range" min="1" max="4" step="0.5" value="1"><output id="kro"></output></div>
+<div id="eout" class="res" aria-live="polite"></div>
+<p>Hipótesis: antes de mover, predice el factor del volumen al duplicar h y al duplicar r. Luego compruébalo.</p>
+<button id="g1">Duplicar altura</button> <button id="g2">Duplicar radio</button> <button id="g0">Volver a 1×</button>
+<h3 style="margin-top:18px">Paraboloides</h3><p>¿Cómo cambia la superficie al variar a, b y c?</p><button id="gp">Probar en el laboratorio</button></div></div>
+<h3 id="x-con" style="margin-top:34px">Cilindro y cono: ¿cuántos conos llenan un cilindro?</h3>
+<div class="lab"><div class="cv" id="cv3"></div><div class="card"><p>Mismo radio y misma altura. Llena el cilindro con el contenido de un cono.</p>
+<div class="sl"><label for="fl">Conos vertidos</label><input id="fl" type="range" min="0" max="3" step="0.05" value="0"><output id="flo"></output></div>
+<div id="fout" class="res" aria-live="polite"></div></div></div>
+
+<h3 id="x-arq" style="margin-top:34px">Arquímedes: cilindro, esfera y cono</h3>
+<div class="lab"><div><div class="cv" id="cv4"></div><p class="tag">De izquierda a derecha: cilindro, esfera y cono. Los tres tienen radio r y altura h = 2r.</p></div>
+<div class="card"><div class="sl"><label for="ar">Radio r</label><input id="ar" type="range" min="0.5" max="1.3" step="0.1" value="1"><output id="aro"></output></div>
+<div id="aout" class="res" aria-live="polite"></div>
+<p>Hipótesis: ¿qué fracción del cilindro ocupa la esfera? ¿Y el cono? Cambia r y comprueba si las proporciones se mantienen.</p></div></div>
+
+<h3 id="x-esc" style="margin-top:34px">Escala: si todo se hace k veces más grande</h3>
+<div class="lab"><div><div class="cv" id="cv5"></div><p class="tag">Contorno claro: figura original (k = 1). Sólido relleno: figura ampliada.</p></div>
+<div class="card"><div class="row fl" id="esel" role="group" aria-label="Figura"><button data-s="cub">Cubo</button><button data-s="cil">Cilindro</button><button data-s="esf">Esfera</button><button data-s="con">Cono</button></div>
+<div class="sl"><label for="ek">Factor k</label><input id="ek" type="range" min="1" max="3" step="0.25" value="1"><output id="eko"></output></div>
+<div id="eeout" class="res" aria-live="polite"></div>
+<p>Hipótesis: si todas las longitudes se multiplican por k, ¿por cuánto se multiplican el área y el volumen? Pruébalo con distintas figuras.</p></div></div>
+
+<h3 id="x-pir" style="margin-top:34px">Pirámide y prisma: ¿cuántas pirámides llenan un prisma?</h3>
+<div class="lab"><div><div class="cv" id="cv6"></div><p class="tag">A la izquierda, la pirámide; a la derecha, el prisma de igual base y altura.</p></div>
+<div class="card"><p>Misma base cuadrada y misma altura. Llena el prisma con el contenido de una pirámide.</p>
+<div class="sl"><label for="pl">Pirámides vertidas</label><input id="pl" type="range" min="0" max="3" step="0.05" value="0"><output id="plo"></output></div>
+<div id="pout" class="res" aria-live="polite"></div></div></div>
+
+<h3 id="x-tro" style="margin-top:34px">Tronco de cono: ¿qué pasa al recortar la punta?</h3>
+<div class="lab"><div><div class="cv" id="cv7"></div><p class="tag">Contorno claro: cilindro de radio R y altura h. Sólido relleno: tronco de cono.</p></div>
+<div class="card"><div class="sl"><label for="tr">Radio superior r</label><input id="tr" type="range" min="0" max="1.5" step="0.05" value="0.75"><output id="tro"></output></div>
+<div class="row"><button id="t0">Cono (r = 0)</button><button id="t1">Cilindro (r = R)</button></div>
+<div id="tout" class="res" aria-live="polite"></div>
+<p>Hipótesis: ¿qué fracción del cilindro ocupa el tronco cuando r = R/2?</p></div></div>
+
+<h3 id="x-lat" style="margin-top:34px">La lata perfecta: mismo volumen, ¿menos material?</h3>
+<div class="lab"><div><div class="cv" id="cv8"></div><p class="tag">Contorno claro: la lata de menor área. Sólido relleno: tu lata. Todas guardan 1 litro (1000 cm³).</p></div>
+<div class="card"><div class="sl"><label for="lr">Radio r</label><input id="lr" type="range" min="3.5" max="9" step="0.1" value="7"><output id="lro"></output></div>
+<div class="row"><button id="lbest">Lata óptima</button></div>
+<div id="lout" class="res" aria-live="polite"></div>
+<canvas id="lc" role="img" aria-label="Gráfica del área total según el radio" style="width:100%;height:150px;display:block;background:#10202d;border-radius:10px"></canvas>
+<p>Hipótesis: ¿qué relación hay entre la altura y el radio cuando el área es mínima?</p></div></div></section>
+
+<section id="aprende"><h2>Aprende</h2><h3>Comparación</h3>
+<div class="card"><div class="sl"><label for="cr">Radio r</label><input id="cr" type="range" min="1" max="10" step="0.5" value="3"><output id="cro"></output></div><div class="sl"><label for="ch">Altura h</label><input id="ch" type="range" min="1" max="10" step="0.5" value="4"><output id="cho"></output></div>
+<div class="tw"><table id="ct"></table></div><p id="cmsg"></p></div>
+<div class="card" style="margin-top:12px"><h3>Paraboloide elíptico y paraboloide hiperbólico</h3><div class="tw"><table><tr><th></th><th>Elíptico</th><th>Hiperbólico</th></tr>
+<tr><td>Ecuación</td><td>y = x²/a² + z²/b²</td><td>y = x²/a² − z²/b²</td></tr><tr><td>Forma</td><td>Copa abierta; cortes horizontales son elipses</td><td>Silla de montar; cortes horizontales son hipérbolas</td></tr>
+<tr><td>Punto especial</td><td>Vértice (mínimo)</td><td>Punto de silla (ni máx. ni mín.)</td></tr><tr><td>Volumen acotado</td><td>Sí, al cortar en y = c: ½·π·a·b·c²</td><td>No encierra volumen</td></tr></table></div></div>
+<h3 style="margin-top:34px">En la vida cotidiana</h3><div class="grid" id="apps"></div>
+<h3 style="margin-top:34px">Glosario</h3><div id="glo"></div></section>
+
+<section id="retos"><h2>Academia de retos</h2><div class="card"><div class="row" id="lv"></div><div class="bar" aria-hidden="true"><i id="pb" style="width:0"></i></div><p class="tag" id="pt"></p><div id="q"></div></div></section>
+</main>
+<footer style="text-align:center;padding:30px;color:var(--g);font-size:14px">SpaceVol · Laboratorio virtual de matemáticas</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),PI=Math.PI,f2=x=>x.toLocaleString('es-CO',{maximumFractionDigits:2});
+const C={n:0x172536,s:0x55756F,g:0x899A91,a:0xC4B9A7,m:0xEAE6DD};
+/* ---------- Visor 3D reutilizable ---------- */
+function Viewer(box){const v={ok:false};if(!window.THREE){box.innerHTML='<div class="msg">No se pudo cargar Three.js (revisa tu conexión a internet).</div>';return v;}
+ let ren;try{ren=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch(e){box.innerHTML='<div class="msg">Tu navegador no admite WebGL.</div>';return v;}
+ box.appendChild(ren.domElement);ren.domElement.setAttribute('aria-label','Modelo 3D interactivo');
+ const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(42,1,.1,100),grp=new THREE.Group();sc.add(grp);
+ sc.add(new THREE.AmbientLight(0xffffff,.65));const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(4,6,5);sc.add(dl);
+ const gr=new THREE.GridHelper(10,20,C.g,0x344B59);gr.position.y=-2.2;sc.add(gr);
+ let d=9,pts=new Map(),pd=0;v.ok=true;v.grp=grp;v.reset=()=>{grp.rotation.set(.45,-.6,0);d=9};v.reset();
+ const el=ren.domElement;
+ el.onpointerdown=e=>{el.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);};
+ el.onpointermove=e=>{if(!pts.has(e.pointerId))return;const o=pts.get(e.pointerId);
+  if(pts.size===1){grp.rotation.y+=(e.clientX-o[0])*.01;grp.rotation.x=Math.max(-1.5,Math.min(1.5,grp.rotation.x+(e.clientY-o[1])*.01));}
+  pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2){const[a,b]=[...pts.values()],n=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd)d=Math.min(20,Math.max(3,d*pd/n));pd=n;}};
+ el.onpointerup=el.onpointercancel=e=>{pts.delete(e.pointerId);pd=0;};
+ el.addEventListener('wheel',e=>{e.preventDefault();d=Math.min(20,Math.max(3,d+e.deltaY*.01));},{passive:false});
+ const rs=()=>{const w=box.clientWidth,h=box.clientHeight;if(!w||!h)return;ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();};new ResizeObserver(rs).observe(box);rs();
+ v.shot=()=>{ren.render(sc,cam);return el.toDataURL('image/png');};v.set=objs=>{while(grp.children.length){const o=grp.children.pop();o.traverse(k=>{k.geometry&&k.geometry.dispose();});}objs.forEach(o=>grp.add(o));};
+ (function loop(){requestAnimationFrame(loop);if(!box.clientWidth)return;cam.position.set(0,0,d);cam.lookAt(0,0,0);ren.render(sc,cam);})();return v;}
+const mat=(c,o=.6)=>new THREE.MeshStandardMaterial({color:c,transparent:true,opacity:o,side:THREE.DoubleSide,roughness:.6});
+const wire=(g,c=C.m,o=.35)=>new THREE.LineSegments(new THREE.WireframeGeometry(g),new THREE.LineBasicMaterial({color:c,transparent:true,opacity:o}));
+function cyl(r,h,y=0){const g=new THREE.Group(),l=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,48,1,true),mat(C.s));l.name='lateral';
+ const t=new THREE.Mesh(new THREE.CircleGeometry(r,48),mat(C.s,.8)),b=t.clone();t.rotation.x=-PI/2;t.position.y=h/2;b.rotation.x=PI/2;b.position.y=-h/2;t.name=b.name='base';g.add(l,t,b);g.position.y=y;return g;}
+/* ---------- Laboratorio (estructura de 3 paneles) ---------- */
+const V2=(a)=>a.map(p=>new THREE.Vector2(p[0],p[1])),rev=(pts,phi)=>new THREE.LatheGeometry(V2(pts),56,0,Math.max(phi,.02));
+const sm=(g,sx=1,sz=1,off=0,extra)=>{const gp=new THREE.Group();gp.add(new THREE.Mesh(g,mat(C.s,.78)),wire(g,C.m,.22));if(extra)gp.add(extra);gp.scale.set(sx,1,sz);gp.position.y=off;return[gp];};
+const circ=(r,n=64)=>Array.from({length:n+1},(_,i)=>[r*Math.cos(2*PI*i/n),r*Math.sin(2*PI*i/n)]);
+const RH=[['r','Radio r',.5,3,.1,1.3],['h','Altura h',.5,4,.1,2.5]],mx=p=>Math.max(p,.01);
+const oCil=p=>{const A=2*PI*p.r*p.h;return[['Radio r',p.r],['Diámetro d = 2r',2*p.r],['Altura h',p.h],['Dos bases: π r² c/u',PI*p.r**2],['Área lateral 2π r h',A],['Área total 2π r (r + h)',A+2*PI*p.r**2],['Volumen π r² h',PI*p.r**2*p.h]];};
+const K=[
+{id:'cil',n:'Círculo → Cilindro',t:'Extrusión',ic:'○',p:RH,eq:'x² + z² ≤ r²',
+ d:'Un disco circular se desplaza perpendicularmente a su plano una altura h. Cada punto de la base recorre un segmento recto y genera el cilindro.',
+ st:['Construye un círculo de radio r.','Trasládalo perpendicularmente una distancia h.','Observa las dos bases circulares y la superficie lateral.'],
+ q:['¿Qué ocurre con el volumen si duplicas la altura?','Se duplica: V = π r² h es proporcional a h.'],tip:'El cono ocupa un tercio del volumen del cilindro con la misma base y altura.',
+ s2:P=>({pts:circ(P.r)}),b:(P,p)=>sm(rev([[0,0],[P.r,0],[P.r,P.h*mx(p)],[0,P.h*mx(p)]],2*PI),1,1,-P.h/2),o:oCil},
+{id:'rcil',n:'Rectángulo → Cilindro',t:'Revolución',ic:'▯',p:RH,eq:'0 ≤ x ≤ r, 0 ≤ y ≤ h',
+ d:'Un rectángulo gira 360° alrededor de uno de sus lados. El lado opuesto traza la superficie lateral y los otros dos lados trazan las bases.',
+ st:['Dibuja un rectángulo de base r y altura h.','Fija un lado vertical como eje.','Gira el rectángulo 360° alrededor del eje.'],
+ q:['¿Qué sólido genera un rectángulo al girar alrededor de un lado?','Un cilindro de radio r (el lado perpendicular al eje) y altura h.'],tip:'Un mismo sólido puede generarse por extrusión o por revolución.',
+ s2:P=>({pts:[[0,0],[P.r,0],[P.r,P.h],[0,P.h]],axis:1}),b:(P,p)=>sm(rev([[0,0],[P.r,0],[P.r,P.h],[0,P.h]],2*PI*p),1,1,-P.h/2),o:oCil},
+{id:'cone',n:'Triángulo rectángulo → Cono',t:'Revolución',ic:'◺',p:RH,eq:'y = h(1 − x/r)',
+ d:'Un triángulo rectángulo gira alrededor de uno de sus catetos. La hipotenusa traza la superficie lateral y el otro cateto, la base.',
+ st:['Dibuja un triángulo rectángulo con catetos r y h.','Fija el cateto h como eje.','Gira 360°: la hipotenusa (generatriz g) barre el cono.'],
+ q:['Con igual base y altura, ¿qué fracción del cilindro es el cono?','Un tercio: V = ⅓ π r² h.'],tip:'La generatriz del cono es la hipotenusa del triángulo: g = √(r² + h²).',
+ s2:P=>({pts:[[0,0],[P.r,0],[0,P.h]],axis:1}),
+ b:(P,p)=>{const v=new THREE.Mesh(new THREE.SphereGeometry(.07,16,16),new THREE.MeshBasicMaterial({color:C.a}));v.position.y=P.h;return sm(rev([[0,0],[P.r,0],[0,P.h]],2*PI*p),1,1,-P.h/2,v);},
+ o:p=>{const g=Math.hypot(p.r,p.h);return[['Radio r',p.r],['Diámetro d = 2r',2*p.r],['Altura h (al vértice)',p.h],['Generatriz g = √(r² + h²)',g],['Área lateral π r g',PI*p.r*g],['Área total π r (r + g)',PI*p.r*(p.r+g)],['Volumen ⅓ π r² h',PI*p.r**2*p.h/3]];}},
+{id:'esf',n:'Semicírculo → Esfera',t:'Revolución',ic:'◐',p:[['r','Radio r',.5,2.5,.1,1.5]],eq:'x² + y² ≤ r², x ≥ 0',
+ d:'Un semicírculo gira 360° alrededor de su diámetro y genera una esfera.',
+ st:['Dibuja un semicírculo de radio r.','Toma su diámetro como eje.','Gira 360° y observa cómo se cierra la esfera.'],
+ q:['Si el radio se duplica, ¿cuántas veces crece el volumen?','8 veces: V = 4/3 π r³ depende de r³.'],tip:'La esfera es el sólido que encierra más volumen con la menor área.',
+ s2:P=>({pts:Array.from({length:49},(_,i)=>{const t=-PI/2+PI*i/48;return[P.r*Math.cos(t),P.r*Math.sin(t)];}),axis:1}),
+ b:(P,p)=>sm(rev(Array.from({length:49},(_,i)=>{const t=-PI/2+PI*i/48;return[P.r*Math.cos(t),P.r*Math.sin(t)+P.r];}),2*PI*p),1,1,-P.r),
+ o:p=>[['Radio r',p.r],['Diámetro d = 2r',2*p.r],['Área 4π r²',4*PI*p.r**2],['Volumen 4/3 π r³',4*PI*p.r**3/3]]},
+{id:'pir',n:'Cuadrado → Pirámide',t:'Pirámides',ic:'△',p:RH,eq:'|x| ≤ r, |z| ≤ r (lado 2r)',
+ d:'Un cuadrado de lado 2r sirve de base; sus cuatro vértices se unen con un punto a altura h y se forma la pirámide cuadrangular.',
+ st:['Dibuja un cuadrado de lado 2r.','Elige el vértice a altura h sobre el centro.','Une el vértice con las esquinas: aparecen 4 caras triangulares.'],
+ q:['¿Qué fracción del prisma de igual base y altura es la pirámide?','Un tercio: V = ⅓ · (2r)² · h.'],tip:'La pirámide y el cono comparten la misma fórmula: ⅓ · área de la base · altura.',
+ s2:P=>({pts:[[-P.r,-P.r],[P.r,-P.r],[P.r,P.r],[-P.r,P.r]]}),
+ b:(P,p)=>{const H=P.h*mx(p),g=new THREE.ConeGeometry(P.r*Math.SQRT2,H,4,1);g.rotateY(PI/4);return sm(g,1,1,(H-P.h)/2);},
+ o:p=>{const l=Math.hypot(p.r,p.h);return[['Lado de la base 2r',2*p.r],['Altura h',p.h],['Apotema de cara √(r² + h²)',l],['Área lateral 4 r √(r² + h²)',4*p.r*l],['Área total 4 r (r + √(r² + h²))',4*p.r*(p.r+l)],['Volumen ⅓ (2r)² h',4*p.r**2*p.h/3]];}},
+{id:'pel',n:'Parábola → Paraboloide elíptico',t:'Revolución',ic:'∪',p:[['a','Parámetro a',.5,2.5,.1,1],['b','Parámetro b',.5,2.5,.1,1.6],['c','Corte c',.5,3.5,.1,2.5]],eq:'x = a√y, 0 ≤ y ≤ c',
+ d:'La región acotada por la parábola y la recta y = c gira alrededor de su eje. Con a ≠ b la copa se estira en un eje: y = x²/a² + z²/b². Se acota para que el volumen sea finito.',
+ st:['Toma la parábola con vértice en el origen.','Acótala con la recta y = c.','Gira la región 360° alrededor del eje.','Ajusta a y b para estirar la copa.'],
+ q:['¿Qué volumen encierra respecto al cilindro elíptico de igual base y altura?','La mitad: V = ½ π a b c² frente a π a b c².'],tip:'Las antenas parabólicas y los reflectores son paraboloides elípticos.',
+ s2:P=>({pts:Array.from({length:31},(_,i)=>{const y=P.c*i/30;return[P.a*Math.sqrt(y),y];}),axis:1}),
+ b:(P,p)=>sm(rev(Array.from({length:31},(_,i)=>{const t=i/30;return[Math.sqrt(P.c)*t,P.c*t*t];}).concat([[0,P.c]]),2*PI*p),P.a,P.b,-P.c/2),
+ o:p=>[['Semieje x en el corte a√c',p.a*Math.sqrt(p.c)],['Semieje z en el corte b√c',p.b*Math.sqrt(p.c)],['Área del corte π a b c',PI*p.a*p.b*p.c],['Volumen ½ π a b c²',PI*p.a*p.b*p.c**2/2]]},
+{id:'hip',n:'Parábola → Paraboloide hiperbólico',t:'Superficies',ic:'⌓',p:[['a','Parámetro a',1,2.5,.1,1.5],['b','Parámetro b',1,2.5,.1,1.5],['L','Dominio L',1,2.5,.1,2]],eq:'y = x²/a² − z²/b²',
+ d:'Una parábola que abre hacia arriba se desliza por otra que abre hacia abajo y barre la superficie «silla». La animación muestra cómo el plano se curva.',
+ st:['Dibuja la parábola y = x²/a² en el plano xy.','Desliza su vértice sobre la parábola y = −z²/b².','Observa el punto de silla en el origen.'],
+ q:['¿Esta superficie encierra un volumen?','No: es una superficie abierta; solo puedes medir alturas respecto al plano.'],tip:'Muchas cubiertas arquitectónicas usan esta forma porque se arma con líneas rectas.',
+ s2:P=>({pts:Array.from({length:41},(_,i)=>{const x=-P.L+2*P.L*i/40;return[x,x*x/P.a**2];}),fill:false}),
+ b:(P,p)=>{const g=new THREE.PlaneGeometry(2*P.L,2*P.L,36,36);g.rotateX(-PI/2);const A=g.attributes.position;for(let i=0;i<A.count;i++){const x=A.getX(i),z=A.getZ(i);A.setY(i,p*(x*x/P.a**2-z*z/P.b**2));}g.computeVertexNormals();
+  return sm(g,1,1,0,new THREE.Mesh(new THREE.SphereGeometry(.07,16,16),new THREE.MeshBasicMaterial({color:C.a})));},
+ o:p=>[['y máximo (x = ±L, z = 0)',p.L**2/p.a**2],['y mínimo (x = 0, z = ±L)',-(p.L**2)/p.b**2],['Punto de silla','(0, 0, 0)']]},
+{id:'cub',n:'Cuadrado → Cubo',t:'Extrusión',ic:'□',p:[['l','Arista l',.5,3,.1,1.8]],eq:'0 ≤ x, y, z ≤ l',
+ d:'Un cuadrado de lado l se desplaza perpendicularmente a su plano una distancia igual a su lado. Cada punto recorre un segmento y se forman 6 caras cuadradas iguales.',
+ st:['Dibuja un cuadrado de lado l.','Trasládalo perpendicularmente una distancia l.','Cuenta 6 caras, 12 aristas y 8 vértices.'],
+ q:['Si duplicas la arista, ¿cuántas veces crece el volumen? ¿Y el área total?','El volumen se multiplica por 8 (l³) y el área total por 4 (6 l²).'],tip:'En el cubo, caras + vértices − aristas = 6 + 8 − 12 = 2 (fórmula de Euler).',
+ s2:P=>({pts:sq(P.l)}),b:(P,p)=>boxB(P.l,P.l,P.l,p),
+ o:p=>[['Arista l',p.l],['Diagonal de una cara l√2',p.l*Math.SQRT2],['Diagonal del cubo l√3',p.l*Math.sqrt(3)],['Área total 6 l²',6*p.l**2],['Volumen l³',p.l**3]]},
+{id:'pri',n:'Rectángulo → Prisma rectangular',t:'Extrusión',ic:'▭',p:[['a','Largo a',.5,3,.1,2],['b','Ancho b',.5,3,.1,1.2],['h','Altura h',.5,4,.1,2]],eq:'0 ≤ x ≤ a, 0 ≤ z ≤ b, 0 ≤ y ≤ h',
+ d:'Un rectángulo de lados a y b se desplaza perpendicularmente una altura h. El volumen es el área de la base multiplicada por la altura.',
+ st:['Dibuja un rectángulo de lados a y b.','Trasládalo perpendicularmente una distancia h.','Observa las 6 caras rectangulares (iguales de dos en dos).'],
+ q:['¿Cuántos cubos de arista 1 caben en un prisma de 3 × 2 × 4?','24 cubos: V = a · b · h = 3 · 2 · 4.'],tip:'Cualquier prisma tiene volumen V = (área de la base) × altura, sea cual sea la forma de la base.',
+ s2:P=>({pts:[[-P.a/2,-P.b/2],[P.a/2,-P.b/2],[P.a/2,P.b/2],[-P.a/2,P.b/2]]}),b:(P,p)=>boxB(P.a,P.b,P.h,p),
+ o:p=>[['Área de la base a b',p.a*p.b],['Área lateral 2 h (a + b)',2*p.h*(p.a+p.b)],['Área total 2 (ab + ah + bh)',2*(p.a*p.b+p.a*p.h+p.b*p.h)],['Diagonal √(a² + b² + h²)',Math.sqrt(p.a**2+p.b**2+p.h**2)],['Volumen a b h',p.a*p.b*p.h]]},
+{id:'prt',n:'Triángulo → Prisma triangular',t:'Extrusión',ic:'◬',p:[['l','Lado del triángulo l',.5,3,.1,1.8],['h','Altura h',.5,4,.1,2.5]],eq:'triángulo equilátero de lado l',
+ d:'Un triángulo equilátero de lado l se desplaza perpendicularmente una altura h y genera un prisma con 2 bases triangulares y 3 caras rectangulares.',
+ st:['Dibuja un triángulo equilátero de lado l.','Trasládalo perpendicularmente una distancia h.','Cuenta 2 bases triangulares y 3 caras rectangulares.'],
+ q:['¿Cuántas caras, aristas y vértices tiene un prisma triangular?','5 caras, 9 aristas y 6 vértices (5 + 6 − 9 = 2).'],tip:'Los techos a dos aguas y los envases de chocolate tipo barra tienen forma de prisma triangular.',
+ s2:P=>({pts:[[-P.l/2,0],[P.l/2,0],[0,P.l*Math.sqrt(3)/2]]}),
+ b:(P,p)=>{const H=P.h*mx(p),R=P.l/Math.sqrt(3);return sm(new THREE.CylinderGeometry(R,R,H,3,1),1,1,(H-P.h)/2);},
+ o:p=>{const B=Math.sqrt(3)/4*p.l**2;return[['Área de la base √3/4 l²',B],['Área lateral 3 l h',3*p.l*p.h],['Área total 3 l h + √3/2 l²',3*p.l*p.h+2*B],['Volumen √3/4 l² h',B*p.h]];}},
+{id:'phx',n:'Hexágono → Pirámide hexagonal',t:'Pirámides',ic:'⬡',p:[['L','Lado del hexágono L',.5,2,.1,1.1],['h','Altura h',.5,4,.1,2.5]],eq:'hexágono regular de lado L',
+ d:'Un hexágono regular sirve de base; sus seis vértices se unen con un punto a altura h sobre el centro y se forman 6 caras triangulares.',
+ st:['Dibuja un hexágono regular de lado L.','Elige el vértice a altura h sobre el centro.','Une el vértice con las esquinas: aparecen 6 caras triangulares.'],
+ q:['¿Cuántas pirámides hexagonales llenan un prisma hexagonal de igual base y altura?','Tres: V = ⅓ · área de la base · altura.'],tip:'El hexágono regular está formado por 6 triángulos equiláteros de lado L.',
+ s2:P=>({pts:Array.from({length:6},(_,i)=>[P.L*Math.cos(PI*i/3),P.L*Math.sin(PI*i/3)])}),
+ b:(P,p)=>{const H=P.h*mx(p);return sm(new THREE.ConeGeometry(P.L,H,6,1),1,1,(H-P.h)/2);},
+ o:p=>{const B=3*Math.sqrt(3)/2*p.L**2,ap=Math.hypot(p.h,p.L*Math.sqrt(3)/2),A=3*p.L*ap;return[['Área de la base 3√3/2 L²',B],['Apotema de cara √(h² + 3L²/4)',ap],['Área lateral 3 L · apotema',A],['Área total',A+B],['Volumen ⅓ · base · h',B*p.h/3]];}},
+{id:'tron',n:'Trapecio → Tronco de cono',t:'Revolución',ic:'▱',p:[['R','Radio inferior R',.5,3,.1,1.5],['r','Radio superior r',0,3,.1,.7],['h','Altura h',.5,4,.1,2.2]],eq:'recta de (R, 0) a (r, h)',
+ d:'Un trapecio rectángulo gira 360° alrededor de su lado perpendicular a las bases. Es un cono al que se le cortó la punta con un plano paralelo a la base.',
+ st:['Dibuja un trapecio rectángulo con bases R y r y altura h.','Fija el lado perpendicular a las bases como eje.','Gira 360°: el lado inclinado barre la superficie lateral.'],
+ q:['¿Qué sólidos aparecen como casos especiales del tronco de cono?','Con r = 0 se obtiene un cono; con r = R, un cilindro.'],tip:'Vasos, baldes y pantallas de lámpara son troncos de cono.',
+ s2:P=>({pts:[[0,0],[P.R,0],[Math.max(P.r,.02),P.h],[0,P.h]],axis:1}),
+ b:(P,p)=>sm(rev([[0,0],[P.R,0],[Math.max(P.r,.02),P.h],[0,P.h]],2*PI*p),1,1,-P.h/2),
+ o:p=>{const g=Math.hypot(p.R-p.r,p.h),L=PI*(p.R+p.r)*g;return[['Generatriz g = √((R − r)² + h²)',g],['Área lateral π (R + r) g',L],['Área total π (R + r) g + π R² + π r²',L+PI*p.R**2+PI*p.r**2],['Volumen ⅓ π h (R² + R r + r²)',PI*p.h*(p.R**2+p.R*p.r+p.r**2)/3]];}},
+{id:'tor',n:'Círculo → Toro',t:'Revolución',ic:'◎',p:[['R','Radio mayor R',1,2.4,.1,1.6],['r','Radio del tubo r',.3,1,.1,.6]],eq:'(√(x² + z²) − R)² + y² ≤ r²',
+ d:'Un círculo de radio r, cuyo centro está a una distancia R del eje, gira 360° alrededor de ese eje y forma una dona (toro).',
+ st:['Dibuja un círculo de radio r.','Colócalo a una distancia R del eje de giro, sin cruzarlo.','Gira 360°: el círculo barre el toro.'],
+ q:['¿Cómo dice el teorema de Pappus que se calcula su volumen?','Área del círculo (π r²) × distancia que recorre su centro (2π R): V = 2π² R r².'],tip:'Una dona, un salvavidas y un anillo son toros.',
+ s2:P=>({pts:circ(P.r).map(a=>[P.R+a[0],a[1]]),axis:1}),
+ b:(P,p)=>sm(rev(circ(P.r,48).map(a=>[P.R+a[0],a[1]]),2*PI*p),1,1,0),
+ o:p=>[['Radio interior R − r',p.R-p.r],['Radio exterior R + r',p.R+p.r],['Área 4π² R r',4*PI*PI*p.R*p.r],['Volumen 2π² R r²',2*PI*PI*p.R*p.r**2]]},
+{id:'eli',n:'Semielipse → Elipsoide',t:'Revolución',ic:'◯',p:[['a','Semieje a (x)',.5,2.5,.1,1.8],['b','Semieje b (y)',.5,2.5,.1,1.2],['c','Semieje c (z)',.5,2.5,.1,1]],eq:'x²/a² + y²/b² + z²/c² ≤ 1',
+ d:'Una semielipse gira 360° alrededor de su eje vertical y genera un elipsoide de revolución. Si además se estira el eje z (c ≠ a), se obtiene un elipsoide general.',
+ st:['Dibuja una semielipse de semiejes a y b.','Toma su eje vertical como eje de giro.','Gira 360° y ajusta c para estirar la figura en z.'],
+ q:['Si a = b = c, ¿qué sólido se obtiene y cuál es su volumen?','Una esfera: V = 4/3 π a b c = 4/3 π r³.'],tip:'La Tierra es un elipsoide ligeramente achatado en los polos.',
+ s2:P=>({pts:Array.from({length:49},(_,i)=>{const t=-PI/2+PI*i/48;return[P.a*Math.cos(t),P.b*Math.sin(t)];}),axis:1}),
+ b:(P,p)=>sm(rev(Array.from({length:49},(_,i)=>{const t=-PI/2+PI*i/48;return[Math.cos(t),P.b*(Math.sin(t)+1)];}),2*PI*p),P.a,P.c,-P.b),
+ o:p=>{const k=1.6075,A=4*PI*(((p.a*p.b)**k+(p.a*p.c)**k+(p.b*p.c)**k)/3)**(1/k);return[['Semiejes a, b, c',p.a+' · '+p.b+' · '+p.c],['Área (aprox. de Thomsen)',A],['Volumen 4/3 π a b c',4*PI*p.a*p.b*p.c/3]];}},
+{id:'hb1',n:'Hipérbola → Hiperboloide de una hoja',t:'Revolución',ic:'≍',p:[['a','Radio de la cintura a',.5,2,.1,1],['c','Parámetro c',.5,3,.1,1.5],['h','Semialtura h',.5,2.2,.1,1.8]],eq:'x²/a² + z²/a² − y²/c² = 1, |y| ≤ h',
+ d:'Una rama de hipérbola gira 360° alrededor de su eje y forma un sólido con «cintura» estrecha. Se acota entre y = −h y y = h para que encierre un volumen.',
+ st:['Dibuja la hipérbola x = a√(1 + y²/c²).','Acótala entre y = −h y y = h.','Gira 360° alrededor del eje y observa la cintura de radio a.'],
+ q:['¿Por qué se dice que es una superficie reglada?','Porque por cada punto pasan rectas contenidas en la superficie: se puede armar solo con líneas rectas.'],tip:'Las torres de enfriamiento de las centrales eléctricas tienen forma de hiperboloide.',
+ s2:P=>({pts:[[0,-P.h]].concat(Array.from({length:41},(_,i)=>{const y=-P.h+2*P.h*i/40;return[P.a*Math.sqrt(1+y*y/P.c**2),y];}),[[0,P.h]]),axis:1}),
+ b:(P,p)=>sm(rev([[0,0]].concat(Array.from({length:41},(_,i)=>{const y=-P.h+2*P.h*i/40;return[P.a*Math.sqrt(1+y*y/P.c**2),y+P.h];}),[[0,2*P.h]]),2*PI*p),1,1,-P.h),
+ o:p=>[['Radio en la cintura a',p.a],['Radio en los extremos a√(1 + h²/c²)',p.a*Math.sqrt(1+p.h**2/p.c**2)],['Volumen π a² (2h + 2h³/(3c²))',PI*p.a**2*(2*p.h+2*p.h**3/(3*p.c**2))]]},
+{id:'tub',n:'Rectángulo hueco → Cilindro hueco',t:'Revolución',ic:'◉',p:[['R','Radio exterior R',1.2,2.5,.1,1.6],['r','Radio interior r',.2,1.1,.1,.9],['h','Altura h',.5,4,.1,2.2]],eq:'r² ≤ x² + z² ≤ R²',
+ d:'Un rectángulo que no toca el eje gira 360° alrededor de uno de sus lados paralelos al eje. Se forma un tubo con pared de grosor R − r.',
+ st:['Dibuja un rectángulo separado del eje una distancia r.','Su ancho es el grosor de la pared: R − r.','Gira 360° alrededor del eje.'],
+ q:['¿Cómo calculas el volumen del material de un tubo?','Volumen del cilindro exterior − volumen del cilindro interior: V = π h (R² − r²).'],tip:'Las tuberías y los rollos de papel son cilindros huecos.',
+ s2:P=>({pts:[[P.r,0],[P.R,0],[P.R,P.h],[P.r,P.h]],axis:1}),
+ b:(P,p)=>sm(rev([[P.r,0],[P.R,0],[P.R,P.h],[P.r,P.h],[P.r,0]],2*PI*p),1,1,-P.h/2),
+ o:p=>[['Grosor de la pared R − r',p.R-p.r],['Área de la corona π (R² − r²)',PI*(p.R**2-p.r**2)],['Área total 2π (R + r) h + 2π (R² − r²)',2*PI*(p.R+p.r)*p.h+2*PI*(p.R**2-p.r**2)],['Volumen π h (R² − r²)',PI*p.h*(p.R**2-p.r**2)]]}];
+const sq=l=>[[-l/2,-l/2],[l/2,-l/2],[l/2,l/2],[-l/2,l/2]];
+const boxB=(w,d,h,p)=>{const H=h*mx(p);return sm(new THREE.BoxGeometry(w,H,d),1,1,(H-h)/2);};
+const FL=['Todas','Extrusión','Revolución','Pirámides','Superficies'];
+let cur=K[0],flt='Todas',P={},prog=0,play=false;const lab=Viewer($('#cv1'));
+$('#cnt').textContent=K.length+' transformaciones';
+function list(){$('#flt').innerHTML=FL.map(f=>`<button data-f="${f}" class="${f===flt?'on':''}">${f}</button>`).join('');
+ $('#cat').innerHTML=K.filter(k=>flt==='Todas'||k.t===flt).map(k=>`<button class="li ${k===cur?'on':''}" data-k="${k.id}"><b>${k.ic} ${k.n}</b><small>${k.t}</small></button>`).join('');
+ document.querySelectorAll('#flt button').forEach(b=>b.onclick=()=>{flt=b.dataset.f;list();});
+ document.querySelectorAll('#cat button').forEach(b=>b.onclick=()=>pick(b.dataset.k));}
+function pick(id){cur=K.find(k=>k.id===id);P={};cur.p.forEach(a=>P[a[0]]=a[5]);prog=0;play=false;$('#an').textContent='Animar';$('#pr').value=0;list();
+ $('#lt').textContent=cur.n;$('#ls').textContent=cur.t+' · explora cómo la figura plana produce el sólido.';$('#e2').textContent=cur.eq;$('#td').textContent=cur.d;$('#tip').textContent=cur.tip;
+ $('#sl').innerHTML=cur.p.map(a=>`<div class="sl"><label for="s_${a[0]}">${a[1]}</label><input id="s_${a[0]}" type="range" min="${a[2]}" max="${a[3]}" step="${a[4]}" value="${a[5]}"><output id="o_${a[0]}">${a[5]}</output></div>`).join('');
+ cur.p.forEach(a=>$('#s_'+a[0]).oninput=e=>{P[a[0]]=+e.target.value;$('#o_'+a[0]).textContent=P[a[0]];update();});
+ $('#fi').innerHTML=`<div class="eq">${cur.eq}</div><div id="out" class="res" aria-live="polite"></div><h4>Pasos de construcción</h4><ol>${cur.st.map(s=>'<li>'+s+'</li>').join('')}</ol>
+ <div class="rt"><div class="ey">Reto matemático</div>${cur.q[0]}<p><button id="va" aria-expanded="false">Ver respuesta</button></p><p id="ra" hidden>${cur.q[1]}</p></div>
+ <h4>Propósito pedagógico</h4><p style="font-size:14px">Construye, compara, modifica parámetros y justifica el volumen empleando modelos geométricos.</p><p class="tag">Unidades arbitrarias (u).</p>`;
+ $('#va').onclick=()=>{const r=$('#ra');r.hidden=!r.hidden;$('#va').setAttribute('aria-expanded',!r.hidden);$('#va').textContent=r.hidden?'Ver respuesta':'Ocultar respuesta';};
+ update();}
+function update(){$('#pr').value=prog;$('#pct').textContent=Math.round(prog*100)+'%';if(lab.ok)lab.set(cur.b(P,prog));
+ $('#out').innerHTML=cur.o(P).map(([k,v])=>k+': <b>'+(typeof v==='number'?f2(v):v)+'</b>').join('<br>');d2();}
+function d2(){const cv=$('#c2'),dp=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;cv.width=W*dp;cv.height=H*dp;const x=cv.getContext('2d');x.scale(dp,dp);
+ const s2=cur.s2(P),pts=s2.pts,xs=pts.map(a=>a[0]),ys=pts.map(a=>a[1]);let x0=Math.min(...xs),x1=Math.max(...xs);if(s2.axis){x0=Math.min(x0,0);x1=Math.max(x1,0);}
+ const y0=Math.min(...ys),y1=Math.max(...ys),s=Math.min(W*.6/((x1-x0)||1),H*.6/((y1-y0)||1)),cx=(x0+x1)/2,cy=(y0+y1)/2,X=a=>W/2+(a-cx)*s,Y=a=>H/2-(a-cy)*s;
+ if(s2.axis){x.setLineDash([6,5]);x.strokeStyle='#899A91';x.beginPath();x.moveTo(X(0),14);x.lineTo(X(0),H-14);x.stroke();x.setLineDash([]);}
+ x.beginPath();pts.forEach((a,i)=>i?x.lineTo(X(a[0]),Y(a[1])):x.moveTo(X(a[0]),Y(a[1])));
+ if(s2.fill!==false){x.closePath();x.fillStyle='#55756F99';x.fill();}x.lineWidth=2.5;x.strokeStyle='#C4B9A7';x.stroke();}
+function loop(){if(!play)return;prog=Math.min(1,prog+.006);update();if(prog>=1){play=false;$('#an').textContent='Animar';}else requestAnimationFrame(loop);}
+$('#an').onclick=()=>{if(play){play=false;$('#an').textContent='Animar';return;}if(prog>=1)prog=0;play=true;$('#an').textContent='Pausar';loop();};
+$('#bk').onclick=()=>{play=false;$('#an').textContent='Animar';prog=Math.max(0,prog-.1);update();};$('#fw').onclick=()=>{play=false;$('#an').textContent='Animar';prog=Math.min(1,prog+.1);update();};
+$('#pr').oninput=e=>{play=false;$('#an').textContent='Animar';prog=+e.target.value;update();};
+$('#rst').onclick=()=>lab.reset&&lab.reset();
+$('#shot').onclick=()=>{if(!lab.ok)return;const a=document.createElement('a');a.href=lab.shot();a.download='spacevol-'+cur.id+'.png';a.click();};
+if(!document.fullscreenEnabled)$('#fs').disabled=true;
+$('#fs').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else $('#lstage').requestFullscreen().catch(()=>{});};
+addEventListener('resize',d2);pick('cil');
+/* ---------- Experimentos ---------- */
+const ex=Viewer($('#cv2'));function buildEx(){const kh=+$('#kh').value,kr=+$('#kr').value;$('#kho').textContent='×'+kh;$('#kro').textContent='×'+kr;
+ const r=1*kr,h=2*kh,V0=PI*2,V=PI*r*r*h;
+ $('#eout').innerHTML=`r = <b>${f2(r)}</b>, h = <b>${f2(h)}</b><br>V original = ${f2(V0)}<br>V nuevo = <b>${f2(V)}</b><br>Factor = <b>×${f2(V/V0)}</b> (= ${kr}² · ${kh})`;
+ if(ex.ok){const s=.7,o=cyl(1*s,2*s);o.children.forEach(m=>{m.material=new THREE.MeshBasicMaterial({color:C.m,wireframe:true,transparent:true,opacity:.5})});const n=cyl(r*s,h*s);ex.set([o,n]);}}
+['kh','kr'].forEach(i=>$('#'+i).oninput=buildEx);
+$('#g1').onclick=()=>{$('#kh').value=2;$('#kr').value=1;buildEx()};$('#g2').onclick=()=>{$('#kr').value=2;$('#kh').value=1;buildEx()};$('#g0').onclick=()=>{$('#kr').value=1;$('#kh').value=1;buildEx()};
+$('#gp').onclick=()=>{pick('pel');show('lab')};buildEx();
+const fv=Viewer($('#cv3'));function buildF(){const n=+$('#fl').value,H=2.4,r=1.2,V=PI*r*r*H,Vc=V/3;$('#flo').textContent=f2(n);
+ $('#fout').innerHTML=`Volumen del cono: <b>${f2(Vc)}</b><br>Volumen del cilindro: <b>${f2(V)}</b><br>Llenado: <b>${f2(n)}</b> conos = <b>${f2(n/3*100)} %</b> del cilindro<br>${n>=3?'Con <b>3 conos</b> se llena exactamente: V cono = ⅓ V cilindro.':'Sigue vertiendo hasta 3.'}`;
+ if(fv.ok){const o=cyl(r,H);o.children.forEach(m=>m.material=new THREE.MeshBasicMaterial({color:C.m,wireframe:true,transparent:true,opacity:.45}));
+  const h=Math.max(H*n/3,.001),liq=cyl(r*.98,h,-H/2+h/2);liq.children.forEach((m,i)=>{if(i===1)m.visible=false;});fv.set([o,liq]);}}
+$('#fl').oninput=buildF;buildF();
+/* ---------- Experimentos adicionales ---------- */
+const gw=(g,o)=>{const w=wire(g,C.m,o);g.dispose();return w;};
+const av=Viewer($('#cv4'));function buildA(){const r=+$('#ar').value,s=.85,R=r*s,H=2*R;$('#aro').textContent=f2(r);
+ const Vc=2*PI*r**3,Ve=4*PI*r**3/3,Vk=2*PI*r**3/3;
+ $('#aout').innerHTML=`Cilindro (r, h = 2r): <b>${f2(Vc)}</b><br>Esfera (r): <b>${f2(Ve)}</b><br>Cono (r, h = 2r): <b>${f2(Vk)}</b><br>Cono : esfera : cilindro = <b>1 : ${f2(Ve/Vk)} : ${f2(Vc/Vk)}</b><br>La esfera ocupa <b>${f2(Ve/Vc*100)} %</b> del cilindro<br>Cono + esfera = <b>${f2(Vk+Ve)}</b> = volumen del cilindro`;
+ if(av.ok){const a=sm(new THREE.CylinderGeometry(R,R,H,44))[0],b=sm(new THREE.SphereGeometry(R,40,28))[0],c=sm(new THREE.ConeGeometry(R,H,44))[0];a.position.x=-2.8;c.position.x=2.8;av.set([a,b,c]);}}
+$('#ar').oninput=buildA;buildA();
+const SH={cub:{b:'cubo de arista 1',A:6,V:1,g:s=>new THREE.BoxGeometry(s,s,s)},cil:{b:'cilindro con r = 0,5 y h = 1',A:1.5*PI,V:PI/4,g:s=>new THREE.CylinderGeometry(s/2,s/2,s,44)},
+ esf:{b:'esfera con r = 0,5',A:PI,V:PI/6,g:s=>new THREE.SphereGeometry(s/2,40,28)},con:{b:'cono con r = 0,5 y h = 1',A:PI*.5*(.5+Math.sqrt(1.25)),V:PI/12,g:s=>new THREE.ConeGeometry(s/2,s,44)}};
+let sh='cub';const ev=Viewer($('#cv5'));
+function buildE(){const k=+$('#ek').value,S=SH[sh],u=1.3;$('#eko').textContent='×'+k;
+ document.querySelectorAll('#esel button').forEach(b=>b.classList.toggle('on',b.dataset.s===sh));
+ $('#eeout').innerHTML=`Medida base: ${S.b}<br>Longitudes: ×<b>${f2(k)}</b><br>Área: ${f2(S.A)} → <b>${f2(S.A*k*k)}</b> (×<b>${f2(k*k)}</b> = k²)<br>Volumen: ${f2(S.V)} → <b>${f2(S.V*k**3)}</b> (×<b>${f2(k**3)}</b> = k³)`;
+ if(ev.ok)ev.set([gw(S.g(u),.55),sm(S.g(u*k))[0]]);}
+document.querySelectorAll('#esel button').forEach(b=>b.onclick=()=>{sh=b.dataset.s;buildE();});$('#ek').oninput=buildE;buildE();
+const pv=Viewer($('#cv6'));function buildP(){const n=+$('#pl').value,l=1.8,H=2.4,Vp=l*l*H/3,Vq=l*l*H;$('#plo').textContent=f2(n);
+ $('#pout').innerHTML=`Volumen de la pirámide: <b>${f2(Vp)}</b><br>Volumen del prisma: <b>${f2(Vq)}</b><br>Llenado: <b>${f2(n)}</b> pirámides = <b>${f2(n/3*100)} %</b> del prisma<br>${n>=3?'Con <b>3 pirámides</b> se llena exactamente: V pirámide = ⅓ V prisma.':'Sigue vertiendo hasta 3.'}`;
+ if(pv.ok){const w=gw(new THREE.BoxGeometry(l,H,l),.5);w.position.x=1.3;const h=Math.max(H*n/3,.001),liq=new THREE.Mesh(new THREE.BoxGeometry(l*.98,h,l*.98),mat(C.s,.8));liq.position.set(1.3,-H/2+h/2,0);
+  const g=new THREE.ConeGeometry(l/Math.SQRT2,H,4,1);g.rotateY(PI/4);const py=sm(g)[0];py.position.x=-1.5;pv.set([w,liq,py]);}}
+$('#pl').oninput=buildP;buildP();
+const tv=Viewer($('#cv7'));function buildT(){const r=+$('#tr').value,R=1.5,h=2.4;$('#tro').textContent=f2(r);
+ const V=PI*h*(R*R+R*r+r*r)/3,Vk=PI*R*R*h/3,Vc=PI*R*R*h,g=Math.hypot(R-r,h);
+ $('#tout').innerHTML=`R = <b>${f2(R)}</b>, r = <b>${f2(r)}</b>, h = <b>${f2(h)}</b><br>Volumen del tronco: <b>${f2(V)}</b><br>Cono completo (r = 0): ${f2(Vk)} · Cilindro (r = R): ${f2(Vc)}<br>El tronco es <b>${f2(V/Vc*100)} %</b> del cilindro<br>Área lateral: <b>${f2(PI*(R+r)*g)}</b>`;
+ if(tv.ok)tv.set([sm(new THREE.CylinderGeometry(Math.max(r,.001),R,h,48,1))[0],gw(new THREE.CylinderGeometry(R,R,h,32,1),.4)]);}
+$('#tr').oninput=buildT;$('#t0').onclick=()=>{$('#tr').value=0;buildT();};$('#t1').onclick=()=>{$('#tr').value=1.5;buildT();};buildT();
+const lv2=Viewer($('#cv8'));
+function drawL(r,A){const cv=$('#lc'),dp=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;cv.width=W*dp;cv.height=H*dp;const x=cv.getContext('2d');x.scale(dp,dp);
+ const V=1000,r0=3.5,r1=9,f=q=>2*PI*q*q+2*V/q,y0=500,y1=760,X=q=>34+(q-r0)/(r1-r0)*(W-48),Y=a=>H-22-(a-y0)/(y1-y0)*(H-36);
+ x.strokeStyle='#899A91';x.lineWidth=1;x.beginPath();x.moveTo(34,8);x.lineTo(34,H-22);x.lineTo(W-8,H-22);x.stroke();
+ x.beginPath();for(let i=0;i<=80;i++){const q=r0+(r1-r0)*i/80;i?x.lineTo(X(q),Y(f(q))):x.moveTo(X(q),Y(f(q)));}x.lineWidth=2.5;x.strokeStyle='#C4B9A7';x.stroke();
+ const rs=Math.cbrt(V/(2*PI));x.fillStyle='#899A91';x.beginPath();x.arc(X(rs),Y(f(rs)),5,0,2*PI);x.fill();
+ x.fillStyle='#EAE6DD';x.beginPath();x.arc(X(r),Y(A),6,0,2*PI);x.fill();
+ x.fillStyle='#C4B9A7';x.font='12px Segoe UI,sans-serif';x.fillText('Área total (cm²)',40,16);x.fillText('radio r (cm)',W-88,H-6);}
+function buildL(){const V=1000,r=+$('#lr').value,h=V/(PI*r*r),A=2*PI*r*r+2*V/r,rs=Math.cbrt(V/(2*PI)),As=2*PI*rs*rs+2*V/rs,s=.18,extra=(A/As-1)*100;$('#lro').textContent=f2(r)+' cm';
+ $('#lout').innerHTML=`Volumen fijo: <b>1000 cm³</b><br>r = <b>${f2(r)}</b> cm, h = <b>${f2(h)}</b> cm (h ÷ 2r = <b>${f2(h/(2*r))}</b>)<br>Área total: <b>${f2(A)}</b> cm²<br>Mínimo posible: ${f2(As)} cm² (r ≈ ${f2(rs)} cm, h = 2r ≈ ${f2(2*rs)} cm)<br>Material extra: <b>${f2(extra)} %</b>${Math.abs(h-2*r)<.6?'<br>¡Casi perfecta! Cuando h ≈ 2r el área es mínima.':''}`;
+ drawL(r,A);
+ if(lv2.ok)lv2.set([sm(new THREE.CylinderGeometry(r*s,r*s,h*s,48))[0],gw(new THREE.CylinderGeometry(rs*s,rs*s,2*rs*s,32),.5)]);}
+$('#lr').oninput=buildL;$('#lbest').onclick=()=>{$('#lr').value=5.4;buildL();};addEventListener('resize',buildL);buildL();
+const XJ=[['Cilindro','#exp h2'],['Cono y cilindro','#x-con'],['Arquímedes','#x-arq'],['Escala','#x-esc'],['Pirámide y prisma','#x-pir'],['Tronco de cono','#x-tro'],['Lata perfecta','#x-lat']];
+$('#xj').innerHTML=XJ.map((x,i)=>`<button data-i="${i}">${x[0]}</button>`).join('');
+document.querySelectorAll('#xj button').forEach(b=>b.onclick=()=>$(XJ[+b.dataset.i][1]).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}));
+/* ---------- Comparación ---------- */
+function cmp(){const r=+$('#cr').value,h=+$('#ch').value,g=Math.hypot(r,h);$('#cro').textContent=r;$('#cho').textContent=h;
+ const Vc=PI*r*r*h,Vk=Vc/3,Ac=2*PI*r*(r+h),Ak=PI*r*(r+g);
+ $('#ct').innerHTML=`<tr><th></th><th>Cilindro</th><th>Cono</th><th>Cono ÷ cilindro</th></tr><tr><td>Volumen</td><td>${f2(Vc)}</td><td>${f2(Vk)}</td><td>${f2(Vk/Vc)}</td></tr><tr><td>Área total</td><td>${f2(Ac)}</td><td>${f2(Ak)}</td><td>${f2(Ak/Ac)}</td></tr><tr><td>Generatriz g</td><td>—</td><td>${f2(g)}</td><td></td></tr>`;
+ $('#cmsg').textContent='El volumen del cono es siempre ⅓ del volumen del cilindro con igual base y altura, pero el cociente de áreas depende de r y h.';}
+['cr','ch'].forEach(i=>$('#'+i).oninput=cmp);cmp();
+/* ---------- Aplicaciones y glosario ---------- */
+const APP=[['🛢️ Tanques de agua','Cilindro','V = π r² h permite calcular los litros (1 m³ = 1000 L).','Si el tanque duplica su altura, ¿cuánta agua más almacena?'],
+['🥫 Latas y envases','Cilindro','El área total 2π r (r + h) indica cuánto material se necesita.','¿Qué pasa con el material si aumenta el radio pero se conserva el volumen?'],
+['🚧 Conos de tránsito','Cono','El área lateral π r g determina la pintura reflectiva.','¿Cómo se calcula la generatriz a partir de r y h?'],
+['🧪 Embudos','Cono','Su volumen ⅓ π r² h indica cuánto líquido contiene.','¿Por qué un embudo ancho contiene más que uno angosto de igual altura?'],
+['📡 Antenas parabólicas','Paraboloide elíptico','Su sección es una parábola: las señales paralelas al eje convergen en el foco.','¿Por qué el receptor se coloca en el foco?'],
+['💡 Reflectores','Paraboloide elíptico','Una fuente en el foco produce un haz de rayos paralelos.','¿Qué ocurre con el haz si la fuente se aleja del foco?'],
+['🏛️ Estructuras arquitectónicas','Paraboloide hiperbólico','Las cubiertas en «silla» se construyen con líneas rectas y resisten bien las cargas.','¿Por qué una superficie curva puede formarse con líneas rectas?']];
+$('#apps').innerHTML=APP.map(a=>`<article class="card"><h3>${a[0]}</h3><p class="tag">Figura: ${a[1]}</p><p>${a[2]}</p><p><b>Reflexiona:</b> ${a[3]}</p></article>`).join('');
+const GL=[['Radio','Distancia del centro de una base circular a su borde.','En el cilindro y el cono define el tamaño de la base.'],['Diámetro','Segmento que cruza el círculo por el centro: d = 2r.','Es el ancho de la base.'],['Altura','Distancia perpendicular entre bases (o entre base y vértice).','Aparece en todos los volúmenes.'],['Generatriz','Segmento sobre la superficie lateral del cono, del borde de la base al vértice: g = √(r² + h²).','Se usa en el área lateral π r g.'],['Vértice','Punto donde convergen las caras laterales.','El cono tiene uno; el paraboloide elíptico tiene su punto más bajo.'],['Base','Cara sobre la que se apoya el sólido.','El cilindro tiene dos bases circulares; el cono, una.'],['Superficie lateral','Parte curva sin contar las bases.','Al desenrollarla: rectángulo (cilindro) o sector circular (cono).'],['Área total','Suma del área lateral y la de las bases.','Mide el material para recubrir el sólido.'],['Volumen','Espacio que ocupa un sólido, en unidades cúbicas.','Mide la capacidad.'],['Superficie cuádrica','Superficie cuya ecuación es de segundo grado en x, y, z.','Los paraboloides son cuádricas.'],['Paraboloide elíptico','Cuádrica y = x²/a² + z²/b².','Parece una copa; sus cortes horizontales son elipses.'],['Paraboloide hiperbólico','Cuádrica y = x²/a² − z²/b².','Parece una silla de montar; sus cortes horizontales son hipérbolas.'],
+['Prisma','Sólido con dos bases paralelas e iguales (polígonos) unidas por caras rectangulares.','Su volumen es el área de la base por la altura.'],['Pirámide','Sólido con una base poligonal y caras triangulares que se unen en un vértice.','Su volumen es ⅓ del área de la base por la altura.'],['Tronco de cono','Parte de un cono que queda al cortarlo con un plano paralelo a la base.','Tiene dos bases circulares de radios distintos.'],['Toro','Superficie en forma de dona, generada al girar un círculo alrededor de un eje exterior a él.','Su volumen es V = 2π² R r².'],['Elipsoide','Cuádrica x²/a² + y²/b² + z²/c² = 1.','Si a = b = c es una esfera.'],['Hiperboloide de una hoja','Cuádrica x²/a² + z²/a² − y²/c² = 1.','Tiene una «cintura» estrecha y se puede construir con líneas rectas.']];
+$('#glo').innerHTML=GL.map(g=>`<details><summary>${g[0]}</summary><p>${g[1]} ${g[2]}</p></details>`).join('');
+/* ---------- Retos ---------- */
+const Q=[
+[['El volumen de un cilindro con r = 3 y h = 5 es:',['15π','30π','45π','90π'],2,'V = π r² h = π · 9 · 5 = 45π ≈ 141,4.'],['Con igual base y altura, el volumen del cono respecto al cilindro es:',['La mitad','Un tercio','El doble','Igual'],1,'El cono ocupa ⅓ del cilindro: V = ⅓ π r² h.'],['Si el diámetro de la base es 10 cm, el radio es:',['5 cm','10 cm','20 cm','2,5 cm'],0,'r = d/2 = 5 cm.']],
+[['Un cono tiene r = 3 y h = 4. Su generatriz mide:',['5','7','√7','12'],0,'g = √(3² + 4²) = √25 = 5.'],['Una lata cilíndrica tiene r = 4 y h = 10. Su área total es:',['80π','112π','160π','56π'],1,'A = 2π r (r + h) = 2π · 4 · 14 = 112π.'],['Si se duplica la altura de un cilindro (mismo radio), su volumen:',['Se duplica','Se cuadruplica','Se mantiene','Se reduce a la mitad'],0,'V es proporcional a h, así que ×2.']],
+[['Si se duplica el radio de un cono (misma altura), su volumen:',['Se duplica','Se cuadruplica','Se multiplica por 8','No cambia'],1,'V depende de r²: 2² = 4.'],['Un tanque cilíndrico de 4 m de diámetro y 3 m de alto almacena aproximadamente:',['37 700 L','12 600 L','18 850 L','150 800 L'],0,'r = 2 m; V = π · 4 · 3 = 12π ≈ 37,7 m³ = 37 700 L.'],['La superficie y = x² − z² es un:',['Paraboloide elíptico','Paraboloide hiperbólico','Cono','Cilindro'],1,'El signo menos produce secciones hiperbólicas: es una «silla».']]];
+const LN=['Nivel 1: Básico','Nivel 2: Intermedio','Nivel 3: Avanzado'];let lv=0,qi=0,sc=0,done=false;
+$('#lv').innerHTML=LN.map((n,i)=>`<button data-l="${i}">${n}</button>`).join('');
+document.querySelectorAll('#lv button').forEach(b=>b.onclick=()=>{lv=+b.dataset.l;qi=0;sc=0;showQ();});
+function showQ(){document.querySelectorAll('#lv button').forEach((b,i)=>b.classList.toggle('on',i===lv));const set=Q[lv];$('#pb').style.width=(qi/set.length*100)+'%';
+ if(qi>=set.length){const m=sc===3?'¡Excelente dominio del nivel!':sc>=2?'Muy buen trabajo, ¡casi perfecto!':'Cada intento fortalece tu comprensión. Repasa el laboratorio y vuelve a intentarlo.';
+  $('#pt').textContent='Reto completado';$('#q').innerHTML=`<h3>Puntuación: ${sc} de ${set.length}</h3><p>${m}</p><button id="rt">Volver a intentarlo</button> ${lv<2?'<button id="nx">Siguiente nivel</button>':''}`;
+  $('#rt').onclick=()=>{qi=0;sc=0;showQ()};if($('#nx'))$('#nx').onclick=()=>{lv++;qi=0;sc=0;showQ()};return;}
+ const q=set[qi];$('#pt').textContent=`${LN[lv]} · pregunta ${qi+1} de ${set.length}`;
+ $('#q').innerHTML=`<h3>${q[0]}</h3>`+q[1].map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')+'<div id="fb" aria-live="polite"></div>';
+ document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,ok=i===q[2];document.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.i===q[2])x.classList.add('ok');});if(!ok)b.classList.add('bad');if(ok)sc++;
+  $('#fb').innerHTML=`<div class="fb"><b>${ok?'¡Correcto!':'Todavía no.'}</b> ${q[3]}</div><p><button id="nq">${qi+1<set.length?'Continuar':'Ver puntuación'}</button></p>`;$('#nq').onclick=()=>{qi++;showQ()};$('#nq').focus();});}
+showQ();
+/* ---------- Portada y pestañas con transición ---------- */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function show(id){const cur=document.querySelector('section.active'),nx=document.getElementById(id);if(!nx||cur===nx)return;
+ const go=()=>{cur&&cur.classList.remove('active','out');nx.classList.add('active');if(id==='lab')d2();if(id==='exp')buildL();scrollTo(0,0);document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+id));};
+ if(cur&&!reduce){cur.classList.add('out');setTimeout(go,220);}else go();}
+document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a){e.preventDefault();show(a.getAttribute('href').slice(1));}});
+$('#enter').onclick=()=>{const p=$('#portada');p.classList.add('hide');setTimeout(()=>p.style.display='none',reduce?0:600);};
+$('#enter').focus();document.querySelector('nav a').classList.add('cur');
+</script></body></html>
